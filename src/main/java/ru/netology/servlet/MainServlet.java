@@ -19,15 +19,40 @@ public class MainServlet extends HttpServlet {
     private static final String PATH_FOR_POST_WITH_ID = "/api/posts/\\d+";
     private static final String POST = "POST";
     private static final String DELETE = "DELETE";
-    private PostController controller;
     private Map<String, Map<String, PostHandler>> postHandlers;
 
     @Override
     public void init() {
         final PostRepository repository = new PostRepository();
         final PostService service = new PostService(repository);
-        controller = new PostController(service);
+        final PostController controller = new PostController(service);
         postHandlers = new HashMap<>();
+        addHandler(GET, PATH_FOR_ALL_POSTS, new PostHandler() {
+            @Override
+            public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+                controller.all(resp);
+            }
+        });
+        addHandler(GET, PATH_FOR_POST_WITH_ID, new PostHandler() {
+            @Override
+            public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+                final long id = Long.parseLong(req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/")));
+                controller.getById(id, resp);
+            }
+        });
+        addHandler(POST, PATH_FOR_ALL_POSTS, new PostHandler() {
+            @Override
+            public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+                controller.save(req.getReader(), resp);
+            }
+        });
+        addHandler(DELETE, PATH_FOR_POST_WITH_ID, new PostHandler() {
+            @Override
+            public void handle(HttpServletRequest req, HttpServletResponse resp) {
+                final long id = Long.parseLong(req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/")));
+                controller.removeById(id, resp);
+            }
+        });
     }
 
     @Override
@@ -35,33 +60,6 @@ public class MainServlet extends HttpServlet {
         try {
             final String path = req.getRequestURI();
             final String method = req.getMethod();
-
-            addHandler(GET, PATH_FOR_ALL_POSTS, new PostHandler() {
-                @Override
-                public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-                    controller.all(resp);
-                }
-            });
-            addHandler(GET, PATH_FOR_POST_WITH_ID, new PostHandler() {
-                @Override
-                public void handle(HttpServletRequest req, HttpServletResponse resp) {
-                    final long id = Long.parseLong(path.substring(path.lastIndexOf("/")));
-                    controller.getById(id, resp);
-                }
-            });
-            addHandler(POST, PATH_FOR_ALL_POSTS, new PostHandler() {
-                @Override
-                public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-                    controller.save(req.getReader(), resp);
-                }
-            });
-            addHandler(DELETE, PATH_FOR_POST_WITH_ID, new PostHandler() {
-                @Override
-                public void handle(HttpServletRequest req, HttpServletResponse resp) {
-                    final long id = Long.parseLong(path.substring(path.lastIndexOf("/")));
-                    controller.removeById(id, resp);
-                }
-            });
 
             for (Map.Entry<String, Map<String, PostHandler>> methodVariants : postHandlers.entrySet()) {
                 if (methodVariants.getKey().equals(method)) {
