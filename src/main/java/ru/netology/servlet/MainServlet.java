@@ -36,7 +36,7 @@ public class MainServlet extends HttpServlet {
         addHandler(GET, PATH_FOR_POST_WITH_ID, new PostHandler() {
             @Override
             public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-                final long id = Long.parseLong(req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/")));
+                final long id = Long.parseLong(req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/") + 1));
                 controller.getById(id, resp);
             }
         });
@@ -49,7 +49,7 @@ public class MainServlet extends HttpServlet {
         addHandler(DELETE, PATH_FOR_POST_WITH_ID, new PostHandler() {
             @Override
             public void handle(HttpServletRequest req, HttpServletResponse resp) {
-                final long id = Long.parseLong(req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/")));
+                final long id = Long.parseLong(req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/") + 1));
                 controller.removeById(id, resp);
             }
         });
