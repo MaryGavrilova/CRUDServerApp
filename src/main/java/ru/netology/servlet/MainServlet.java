@@ -65,7 +65,7 @@ public class MainServlet extends HttpServlet {
                 if (methodVariants.getKey().equals(method)) {
                     Map<String, PostHandler> handlersForMethod = methodVariants.getValue();
                     for (Map.Entry<String, PostHandler> pathVariants : handlersForMethod.entrySet()) {
-                        if (pathVariants.getKey().matches(path)) {
+                        if (path.matches(pathVariants.getKey())) {
                             PostHandler postHandler = pathVariants.getValue();
                             postHandler.handle(req, resp);
                             return;
