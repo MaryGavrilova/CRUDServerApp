@@ -43,4 +43,3 @@ public class PostController {
         service.removeById(id);
     }
 }
-
