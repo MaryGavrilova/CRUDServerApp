@@ -1,6 +1,5 @@
 package ru.netology.repository;
 
-import org.springframework.stereotype.Repository;
 import ru.netology.model.Post;
 
 import java.util.Collections;
@@ -8,9 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-@Repository
+
 public class PostRepository {
     protected Map<Long, Post> allPosts = new ConcurrentHashMap<>();
     protected long numberOfAllPosts;
