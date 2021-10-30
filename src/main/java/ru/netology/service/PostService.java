@@ -7,25 +7,25 @@ import ru.netology.repository.PostRepository;
 import java.util.List;
 
 public class PostService {
-    private final PostRepository repository;
+    private final PostRepository postRepository;
 
-    public PostService(PostRepository repository) {
-        this.repository = repository;
+    public PostService(PostRepository postRepository) {
+        this.postRepository = postRepository;
     }
 
     public List<Post> all() {
-        return repository.all();
+        return postRepository.all();
     }
 
     public Post getById(long id) {
-        return repository.getById(id).orElseThrow(NotFoundException::new);
+        return postRepository.getById(id).orElseThrow(NotFoundException::new);
     }
 
     public Post save(Post post) {
-        return repository.save(post);
+        return postRepository.save(post);
     }
 
     public void removeById(long id) {
-        repository.removeById(id);
+        postRepository.removeById(id);
     }
 }

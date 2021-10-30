@@ -1,11 +1,11 @@
 package ru.netology.servlet;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import ru.netology.config.JavaConfig;
 import ru.netology.controller.PostController;
 
 import ru.netology.exception.NotFoundException;
 import ru.netology.handlers.PostHandler;
-import ru.netology.repository.PostRepository;
-import ru.netology.service.PostService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,34 +24,34 @@ public class MainServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final PostRepository repository = new PostRepository();
-        final PostService service = new PostService(repository);
-        final PostController controller = new PostController(service);
+        final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(JavaConfig.class);
+        final PostController postController = context.getBean(PostController.class);
+
         postHandlers = new HashMap<>();
         addHandler(GET, PATH_FOR_ALL_POSTS, new PostHandler() {
             @Override
             public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-                controller.all(resp);
+                postController.all(resp);
             }
         });
         addHandler(GET, PATH_FOR_POST_WITH_ID, new PostHandler() {
             @Override
             public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
                 final long id = Long.parseLong(req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/") + 1));
-                controller.getById(id, resp);
+                postController.getById(id, resp);
             }
         });
         addHandler(POST, PATH_FOR_ALL_POSTS, new PostHandler() {
             @Override
             public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-                controller.save(req.getReader(), resp);
+                postController.save(req.getReader(), resp);
             }
         });
         addHandler(DELETE, PATH_FOR_POST_WITH_ID, new PostHandler() {
             @Override
             public void handle(HttpServletRequest req, HttpServletResponse resp) {
                 final long id = Long.parseLong(req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/") + 1));
-                controller.removeById(id, resp);
+                postController.removeById(id, resp);
             }
         });
     }
